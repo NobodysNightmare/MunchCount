@@ -1,0 +1,149 @@
+<html>
+<head>
+	<title>MunchCount</title>
+	<script type="text/javascript">	
+		function addNewPlayer() {
+			var old_block = document.getElementById('playerblock');
+			var new_block = old_block.cloneNode(true);
+			
+			var playerlist = document.getElementById('playerlist');
+			playerlist.appendChild(new_block);
+			new_block.getElementsByTagName('input')[0].focus();
+		}
+		
+		function maybeAddNewPlayer(event) {
+			if(event.keyCode == 13)
+				addNewPlayer();
+		}
+		
+		function changeLevel(source, diff) {
+			var current = source;
+			while(current.nodeType != 1 || current.nodeName != 'SPAN')
+				current = current.previousSibling;
+			
+			var level = parseInt(current.firstChild.nodeValue);
+			level += diff;
+			if(level < 1)
+				level = 1;
+			if(level > 22)
+				level = 22;
+			current.firstChild.nodeValue = level;
+		}
+		
+		function rollDice() {
+			document.getElementById('dice').className = "rolling";
+			doRollDice(8);
+		}
+		
+		function doRollDice(rolls) {
+			rolls = parseInt(rolls)-1;
+			document.getElementById('dice').firstChild.nodeValue = parseInt(Math.random()*6+1);
+			if(rolls>0)
+				setTimeout("doRollDice("+rolls+");", 60);
+			else
+				document.getElementById('dice').className = "";
+		}
+		
+		function resetPlayers() {
+			var levels = document.getElementsByClassName('level');
+			for (current in levels) {
+				if(levels[current].nodeType != 1)
+					break;
+				levels[current].firstChild.nodeValue = 1;
+			}
+		}
+	</script>
+	<style type="text/css">
+		
+		body {
+			font-family: Arial;
+		}
+		
+		.playername {
+			font-size: 16pt;
+		}
+		
+		.level {
+			margin-left: 20em;
+			font-size: 16pt;
+		}
+		
+		.level:before {
+			content: "Level ";
+		}
+		
+		.actionbutton {
+			margin: 2px;
+			border-style: none;
+			background-color: white;
+			cursor: pointer;
+			min-width: 32px;
+			height: 32px;
+			
+			-o-transition-property: all;
+			-o-transition-Duration: 1s;
+		}
+		
+		.actionbutton.plus:hover {
+			background-color: lightgreen;
+		}
+		
+		.actionbutton.minus:hover {
+			background-color: tomato;
+		}
+		
+		.playername {
+			border-style: none;
+		}
+		
+		.playername:focus {
+			box-shadow:			0px 0px 18px 4px black;
+			-moz-box-shadow:	0px 0px 18px 4px black;
+		}
+		
+		.playerblock {
+			padding: 10px;
+		}
+		
+		.playerblock:not(:last-child) {
+			border-bottom: 1px solid black;
+		}
+		
+		#dice {
+			font-size: 16pt;
+			transition-property: all;
+			transition-duration: 500ms;
+			-o-transition-property: all;
+			-o-transition-duration: 500ms;
+			-moz-transition-property: all;
+			-moz-transition-duration: 500ms;
+			-webkit-transition-property: all;
+			-webkit-transition-duration: 500ms;
+		}
+		
+		#dice.rolling {
+			transform: rotate(360deg);
+			-o-transform: rotate(360deg);
+			-moz-transform: rotate(360deg);
+			-webkit-transform: rotate(360deg);
+		}
+	</style>
+</head>
+<body onload="document.getElementById('nameinput').focus();">
+	<h1>om nom nom!</h1>
+	<div id="playerlist">
+		<div id="playerblock" class="playerblock">
+			<input id="nameinput" class="playername" type="text" onkeydown="maybeAddNewPlayer(event)" />
+			<span class="level">1</span>
+			<button class="actionbutton plus" onclick="changeLevel(this, 1)">+</button>
+			<button class="actionbutton minus" onclick="changeLevel(this, -1)">-</button>
+		</div>
+	</div>
+	<button class="actionbutton" onclick="addNewPlayer()">Spieler hinzuf�gen</button>
+	<button class="actionbutton" onclick="resetPlayers()">alle Zur�cksetzen</button>
+	<div>
+		<button class="actionbutton" onclick="rollDice()">W�rfeln</button>
+		<span id="dice">0</span>
+	</div>
+</body>
+</html>
